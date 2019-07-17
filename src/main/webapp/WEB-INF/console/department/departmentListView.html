@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>部门列表</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script th:src="@{/js/includ.js}"></script>
+</head>
+<body class="body_list layui-content-wrapper">
+  
+	<div class="search-wrap layui-form" style="margin-top: 5px;">
+		<button class="layui-btn layuiadmin-btn-useradmin" data-type="add"><i class="layui-icon layui-icon-add-1 layuiadmin-button-btn"></i>添加</button>
+		
+        <div class="layui-card-body">
+        	<table id="departmentTable" lay-filter="departmentTable"></table>
+      	</div>
+	</div>
+   
+	<script type="text/html" id="barEdit">
+  		<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+	</script>
+  <script>
+  layui.config({
+    base: webRoot+'/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'useradmin', 'table','laydate'], function(){
+    var $ = layui.$
+    ,form = layui.form
+    ,table = layui.table,laydate = layui.laydate,admin=layui.admin;
+    table.render({
+		id:'departmentTable'
+	    ,elem: '#departmentTable'
+	    ,url: webRoot+'/departmentManage/departmentList'
+	    ,limit:10
+	    ,limits:[10,20,30,40]
+	    ,select:true
+	    ,cols: [ [
+	    	{field:'departmentName', minWidth :'200',align:'center',title: '部门名称'}
+          ,{title: '操作',minWidth :'200',toolbar: '#barEdit',fixed:'right',width:120}
+	    ] ]
+		,page: true
+	  });
+  //监听工具条
+	  table.on('tool(departmentTable)', function(obj){
+		  if(obj.event === 'edit'){
+			  layer.open({
+				  type: 2
+		          ,title: '修改部门'
+		          ,content: webRoot+'/departmentManage/editDepartmentView?departmentId='+obj.data.departmentId
+		          ,maxmin: true
+		          ,area: admin.screen() < 2 ? ['90%', '70%'] : ['60%', '60%']
+		          ,btn: ['确定', '取消']
+		          ,btnAlign: 'c'
+		          ,yes: editCall
+			  });
+		  }
+	  });
+	  $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){
+	      var type = $(this).data('type');
+	      active[type] ? active[type].call(this) : '';
+	    });
+    //事件
+    var active = {
+      add: function(){
+        layer.open({
+          type: 2
+          ,title: '添加部门'
+          ,content: webRoot+'/departmentManage/editDepartmentView'
+          ,maxmin: true
+          ,area: admin.screen() < 2 ? ['90%', '70%'] : ['60%', '60%']
+          ,btn: ['确定', '取消']
+          ,btnAlign: 'c'
+          ,offset: 'auto'
+          ,yes: editCall
+        });
+      }
+    };
+        
+    var editCall=function(index, layero){
+        var iframeWindow = window['layui-layer-iframe'+ index]
+        ,submitID = 'LAY-product-front-submit'
+        ,submit = layero.find('iframe').contents().find('#'+ submitID);
+        //监听提交
+        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+          //提交 Ajax 成功后，静态更新表格中的数据
+        	dataAction(data.field);
+            table.reload("departmentTable",{});
+            layer.close(index);
+        });
+        submit.trigger('click');
+      }
+    
+    /*   提交数据 */
+    function dataAction(data){
+  	  $.ajax({
+      	  url: webRoot+'/departmentManage/editDepartment'
+  		      ,data:data
+  		      ,dataType:'json'
+  		      ,success: function(res){
+  		    	  if (res.result_code && res.return_code) {
+  		    		  toast('操作成功');
+  		    	  } else {
+  		    		  if(res.msg){
+  		    			  toastErr(res.msg);
+  		    		  }else{
+  		    			  toastErr('操作失败');
+  		    		  }
+  		    	  }
+  		      }
+        });
+    }
+  });
+  
+  </script>
+</body>
+</html>

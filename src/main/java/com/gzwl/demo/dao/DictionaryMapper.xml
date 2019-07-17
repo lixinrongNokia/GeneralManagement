@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gzwl.demo.dao.DictionaryMapper" >
+  <resultMap id="BaseResultMap" type="com.gzwl.demo.pojo.Dictionary" >
+    <id column="dictionary_id" property="dictionaryId" jdbcType="INTEGER" />
+    <result column="dictionary_table" property="dictionaryTable" jdbcType="VARCHAR" />
+    <result column="dictionary_colum" property="dictionaryColum" jdbcType="VARCHAR" />
+    <result column="dictionary_value" property="dictionaryValue" jdbcType="VARCHAR" />
+    <result column="dictionary_serial_number" property="dictionarySerialNumber" jdbcType="INTEGER" />
+    <result column="dictionary_status" property="dictionaryStatus" jdbcType="INTEGER" />
+    <result column="dictionary_remarks" property="dictionaryRemarks" jdbcType="VARCHAR" />
+    <result column="dictionary_table_name" jdbcType="VARCHAR" property="dictionaryTableName" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    dictionary_id, dictionary_table, dictionary_colum, dictionary_value, dictionary_serial_number, 
+    dictionary_status, dictionary_remarks
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.gzwl.demo.pojo.DictionaryExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from dictionary
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="customizationSelectByExample" parameterType="com.gzwl.demo.pojo.DictionaryExample" resultMap="BaseResultMap">
+    SELECT
+	    dictionary1.dictionary_id,
+	    dictionary1.dictionary_value,
+	    dictionary1.dictionary_serial_number,
+	    dictionary1.dictionary_status,
+	    dictionary1.dictionary_remarks,
+	    dictionary4.dictionary_type_name1 AS dictionary_table_name,
+	    dictionary4.dictionary_type_name2 AS dictionary_colum
+	FROM
+	    dictionary dictionary1
+	LEFT JOIN (
+		SELECT
+			dictionary2.dictionary_type_name dictionary_type_name1,
+			dictionary2.dictionary_type_value dictionary_type_value1,
+			dictionary3.dictionary_type_name dictionary_type_name2,
+			dictionary3.dictionary_type_value dictionary_type_value2
+		FROM
+			dictionary_type dictionary2
+		INNER JOIN dictionary_type dictionary3 ON dictionary3.parent_id = dictionary2.dictionary_type_id
+		) dictionary4 ON dictionary1.dictionary_table = dictionary4.dictionary_type_value1
+	AND dictionary1.dictionary_colum = dictionary4.dictionary_type_value2
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    order by dictionary_serial_number DESC
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dictionary
+    where dictionary_id = #{dictionaryId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dictionary
+    where dictionary_id = #{dictionaryId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.gzwl.demo.pojo.DictionaryExample" >
+    delete from dictionary
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.gzwl.demo.pojo.Dictionary" >
+    insert into dictionary (dictionary_id, dictionary_table, dictionary_colum, 
+      dictionary_value, dictionary_serial_number, 
+      dictionary_status, dictionary_remarks)
+    values (#{dictionaryId,jdbcType=INTEGER}, #{dictionaryTable,jdbcType=VARCHAR}, #{dictionaryColum,jdbcType=VARCHAR}, 
+      #{dictionaryValue,jdbcType=VARCHAR}, #{dictionarySerialNumber,jdbcType=INTEGER}, 
+      #{dictionaryStatus,jdbcType=INTEGER}, #{dictionaryRemarks,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.gzwl.demo.pojo.Dictionary" >
+    insert into dictionary
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="dictionaryId != null" >
+        dictionary_id,
+      </if>
+      <if test="dictionaryTable != null" >
+        dictionary_table,
+      </if>
+      <if test="dictionaryColum != null" >
+        dictionary_colum,
+      </if>
+      <if test="dictionaryValue != null" >
+        dictionary_value,
+      </if>
+      <if test="dictionarySerialNumber != null" >
+        dictionary_serial_number,
+      </if>
+      <if test="dictionaryStatus != null" >
+        dictionary_status,
+      </if>
+      <if test="dictionaryRemarks != null" >
+        dictionary_remarks,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="dictionaryId != null" >
+        #{dictionaryId,jdbcType=INTEGER},
+      </if>
+      <if test="dictionaryTable != null" >
+        #{dictionaryTable,jdbcType=VARCHAR},
+      </if>
+      <if test="dictionaryColum != null" >
+        #{dictionaryColum,jdbcType=VARCHAR},
+      </if>
+      <if test="dictionaryValue != null" >
+        #{dictionaryValue,jdbcType=VARCHAR},
+      </if>
+      <if test="dictionarySerialNumber != null" >
+        #{dictionarySerialNumber,jdbcType=INTEGER},
+      </if>
+      <if test="dictionaryStatus != null" >
+        #{dictionaryStatus,jdbcType=INTEGER},
+      </if>
+      <if test="dictionaryRemarks != null" >
+        #{dictionaryRemarks,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.gzwl.demo.pojo.DictionaryExample" resultType="java.lang.Integer" >
+    select count(*) from dictionary
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update dictionary
+    <set >
+      <if test="record.dictionaryId != null" >
+        dictionary_id = #{record.dictionaryId,jdbcType=INTEGER},
+      </if>
+      <if test="record.dictionaryTable != null" >
+        dictionary_table = #{record.dictionaryTable,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dictionaryColum != null" >
+        dictionary_colum = #{record.dictionaryColum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dictionaryValue != null" >
+        dictionary_value = #{record.dictionaryValue,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dictionarySerialNumber != null" >
+        dictionary_serial_number = #{record.dictionarySerialNumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.dictionaryStatus != null" >
+        dictionary_status = #{record.dictionaryStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.dictionaryRemarks != null" >
+        dictionary_remarks = #{record.dictionaryRemarks,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update dictionary
+    set dictionary_id = #{record.dictionaryId,jdbcType=INTEGER},
+      dictionary_table = #{record.dictionaryTable,jdbcType=VARCHAR},
+      dictionary_colum = #{record.dictionaryColum,jdbcType=VARCHAR},
+      dictionary_value = #{record.dictionaryValue,jdbcType=VARCHAR},
+      dictionary_serial_number = #{record.dictionarySerialNumber,jdbcType=INTEGER},
+      dictionary_status = #{record.dictionaryStatus,jdbcType=INTEGER},
+      dictionary_remarks = #{record.dictionaryRemarks,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gzwl.demo.pojo.Dictionary" >
+    update dictionary
+    <set >
+      <if test="dictionaryTable != null" >
+        dictionary_table = #{dictionaryTable,jdbcType=VARCHAR},
+      </if>
+      <if test="dictionaryColum != null" >
+        dictionary_colum = #{dictionaryColum,jdbcType=VARCHAR},
+      </if>
+      <if test="dictionaryValue != null" >
+        dictionary_value = #{dictionaryValue,jdbcType=VARCHAR},
+      </if>
+      <if test="dictionarySerialNumber != null" >
+        dictionary_serial_number = #{dictionarySerialNumber,jdbcType=INTEGER},
+      </if>
+      <if test="dictionaryStatus != null" >
+        dictionary_status = #{dictionaryStatus,jdbcType=INTEGER},
+      </if>
+      <if test="dictionaryRemarks != null" >
+        dictionary_remarks = #{dictionaryRemarks,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where dictionary_id = #{dictionaryId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.gzwl.demo.pojo.Dictionary" >
+    update dictionary
+    set dictionary_table = #{dictionaryTable,jdbcType=VARCHAR},
+      dictionary_colum = #{dictionaryColum,jdbcType=VARCHAR},
+      dictionary_value = #{dictionaryValue,jdbcType=VARCHAR},
+      dictionary_serial_number = #{dictionarySerialNumber,jdbcType=INTEGER},
+      dictionary_status = #{dictionaryStatus,jdbcType=INTEGER},
+      dictionary_remarks = #{dictionaryRemarks,jdbcType=VARCHAR}
+    where dictionary_id = #{dictionaryId,jdbcType=INTEGER}
+  </update>
+</mapper>

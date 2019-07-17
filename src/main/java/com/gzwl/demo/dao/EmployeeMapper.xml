@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gzwl.demo.dao.EmployeeMapper" >
+  <resultMap id="BaseResultMap" type="com.gzwl.demo.pojo.Employee" >
+    <id column="employee_id" property="employeeId" jdbcType="INTEGER" />
+    <result column="employee_login_name" property="employeeLoginName" jdbcType="VARCHAR" />
+    <result column="employee_login_password" property="employeeLoginPassword" jdbcType="VARCHAR" />
+    <result column="employee_nick_name" property="employeeNickName" jdbcType="VARCHAR" />
+    <result column="role_id" property="roleId" jdbcType="INTEGER" />
+    <result column="department_id" property="departmentId" jdbcType="INTEGER" />
+    <result column="job_id" property="jobId" jdbcType="INTEGER" />
+    <result column="employee_status" property="employeeStatus" jdbcType="BIT" />
+  </resultMap>
+  <resultMap id="customizationResultMap" type="com.gzwl.demo.pojo.Employee" extends="BaseResultMap">
+  	<association property="employeeInfo" javaType="com.gzwl.demo.pojo.EmployeeInfo" resultMap="com.gzwl.demo.dao.EmployeeInfoMapper.BaseResultMap"/>
+  	<association property="department" javaType="com.gzwl.demo.pojo.Department" resultMap="com.gzwl.demo.dao.DepartmentMapper.BaseResultMap"/>
+  	<association property="role" javaType="com.gzwl.demo.pojo.Role" resultMap="com.gzwl.demo.dao.RoleMapper.BaseResultMap"/>
+  	<association property="job" javaType="com.gzwl.demo.pojo.Job" resultMap="com.gzwl.demo.dao.JobMapper.BaseResultMap"/>
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    employee_id, employee_login_name, employee_login_password, employee_nick_name, role_id, 
+    department_id, job_id, employee_status
+  </sql>
+  <sql id="Customization_Column_List">
+  	employee.employee_id, employee_login_name, employee_login_password, employee_nick_name, employee_status,
+  	employee_name, employee_sex, employee_email, employee_phone, employee_addr,
+    department.department_id, department_name,
+    role.role_id, role_name, role_remark,
+    job.job_id, job_name
+  </sql>
+  <!-- 定制联接表 -->
+  <sql id="Customization_Join_Table">
+	 employee
+	 LEFT JOIN employee_info ON (employee.employee_id=employee_info.employee_id)
+	 LEFT JOIN department ON (employee.department_id=department.department_id)
+	 LEFT JOIN role ON (employee.role_id=role.role_id)
+	 LEFT JOIN job ON (employee.job_id=job.job_id)
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.gzwl.demo.pojo.EmployeeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from employee
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <!-- 定制查询列表 -->
+  <select id="customizationSelectByExample" parameterType="com.gzwl.demo.pojo.EmployeeExample" resultMap="customizationResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Customization_Column_List" />
+    from
+    <include refid="Customization_Join_Table"/>
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from employee
+    where employee_id = #{employeeId,jdbcType=INTEGER}
+  </select>
+  <!-- 定制查询 -->
+  <select id="customizationSelectByPrimaryKey" parameterType="java.lang.Integer" resultMap="customizationResultMap">
+    select 
+    <include refid="Customization_Column_List" />
+    from
+    <include refid="Customization_Join_Table"/>
+    where employee.employee_id = #{employee_id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from employee
+    where employee_id = #{employeeId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.gzwl.demo.pojo.EmployeeExample" >
+    delete from employee
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.gzwl.demo.pojo.Employee" >
+    insert into employee (employee_id, employee_login_name, employee_login_password, 
+      employee_nick_name, role_id, department_id, 
+      job_id, employee_status)
+    values (#{employeeId,jdbcType=INTEGER}, #{employeeLoginName,jdbcType=VARCHAR}, #{employeeLoginPassword,jdbcType=VARCHAR}, 
+      #{employeeNickName,jdbcType=VARCHAR}, #{roleId,jdbcType=INTEGER}, #{departmentId,jdbcType=INTEGER}, 
+      #{jobId,jdbcType=INTEGER}, #{employeeStatus,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.gzwl.demo.pojo.Employee" useGeneratedKeys="true" keyProperty="employeeId" >
+    insert into employee
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="employeeId != null" >
+        employee_id,
+      </if>
+      <if test="employeeLoginName != null" >
+        employee_login_name,
+      </if>
+      <if test="employeeLoginPassword != null" >
+        employee_login_password,
+      </if>
+      <if test="employeeNickName != null" >
+        employee_nick_name,
+      </if>
+      <if test="roleId != null" >
+        role_id,
+      </if>
+      <if test="departmentId != null" >
+        department_id,
+      </if>
+      <if test="jobId != null" >
+        job_id,
+      </if>
+      <if test="employeeStatus != null" >
+        employee_status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="employeeId != null" >
+        #{employeeId,jdbcType=INTEGER},
+      </if>
+      <if test="employeeLoginName != null" >
+        #{employeeLoginName,jdbcType=VARCHAR},
+      </if>
+      <if test="employeeLoginPassword != null" >
+        #{employeeLoginPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="employeeNickName != null" >
+        #{employeeNickName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null" >
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="departmentId != null" >
+        #{departmentId,jdbcType=INTEGER},
+      </if>
+      <if test="jobId != null" >
+        #{jobId,jdbcType=INTEGER},
+      </if>
+      <if test="employeeStatus != null" >
+        #{employeeStatus,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.gzwl.demo.pojo.EmployeeExample" resultType="java.lang.Integer" >
+    select count(*) from employee
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update employee
+    <set >
+      <if test="record.employeeId != null" >
+        employee_id = #{record.employeeId,jdbcType=INTEGER},
+      </if>
+      <if test="record.employeeLoginName != null" >
+        employee_login_name = #{record.employeeLoginName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.employeeLoginPassword != null" >
+        employee_login_password = #{record.employeeLoginPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="record.employeeNickName != null" >
+        employee_nick_name = #{record.employeeNickName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.roleId != null" >
+        role_id = #{record.roleId,jdbcType=INTEGER},
+      </if>
+      <if test="record.departmentId != null" >
+        department_id = #{record.departmentId,jdbcType=INTEGER},
+      </if>
+      <if test="record.jobId != null" >
+        job_id = #{record.jobId,jdbcType=INTEGER},
+      </if>
+      <if test="record.employeeStatus != null" >
+        employee_status = #{record.employeeStatus,jdbcType=BIT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update employee
+    set employee_id = #{record.employeeId,jdbcType=INTEGER},
+      employee_login_name = #{record.employeeLoginName,jdbcType=VARCHAR},
+      employee_login_password = #{record.employeeLoginPassword,jdbcType=VARCHAR},
+      employee_nick_name = #{record.employeeNickName,jdbcType=VARCHAR},
+      role_id = #{record.roleId,jdbcType=INTEGER},
+      department_id = #{record.departmentId,jdbcType=INTEGER},
+      job_id = #{record.jobId,jdbcType=INTEGER},
+      employee_status = #{record.employeeStatus,jdbcType=BIT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gzwl.demo.pojo.Employee" >
+    update employee
+    <set >
+      <if test="employeeLoginName != null" >
+        employee_login_name = #{employeeLoginName,jdbcType=VARCHAR},
+      </if>
+      <if test="employeeLoginPassword != null" >
+        employee_login_password = #{employeeLoginPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="employeeNickName != null" >
+        employee_nick_name = #{employeeNickName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null" >
+        role_id = #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="departmentId != null" >
+        department_id = #{departmentId,jdbcType=INTEGER},
+      </if>
+      <if test="jobId != null" >
+        job_id = #{jobId,jdbcType=INTEGER},
+      </if>
+      <if test="employeeStatus != null" >
+        employee_status = #{employeeStatus,jdbcType=BIT},
+      </if>
+    </set>
+    where employee_id = #{employeeId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.gzwl.demo.pojo.Employee" >
+    update employee
+    set employee_login_name = #{employeeLoginName,jdbcType=VARCHAR},
+      employee_login_password = #{employeeLoginPassword,jdbcType=VARCHAR},
+      employee_nick_name = #{employeeNickName,jdbcType=VARCHAR},
+      role_id = #{roleId,jdbcType=INTEGER},
+      department_id = #{departmentId,jdbcType=INTEGER},
+      job_id = #{jobId,jdbcType=INTEGER},
+      employee_status = #{employeeStatus,jdbcType=BIT}
+    where employee_id = #{employeeId,jdbcType=INTEGER}
+  </update>
+  <!--批量设置角色ID部门ID职位ID为NULL-->
+	<update id="updatePropertyOfNull" parameterType="java.util.List">
+    	update employee
+	    <trim prefix="set" suffixOverrides=",">
+	        <trim prefix="role_id =case" suffix="end," >
+	            <foreach collection="list" item="item" index="index">
+	            	<if test="item.roleId!=null">
+	                    when employee_id=#{item.employeeId,jdbcType=INTEGER} then role_id = null
+	                </if>
+	            </foreach>
+	        </trim>
+	        <trim prefix="department_id =case" suffix="end,">
+	            <foreach collection="list" item="item" index="index">
+	                 <if test="item.departmentId!=null">
+	                    when employee_id=#{item.departmentId,jdbcType=INTEGER} then department_id = null
+	                </if>
+	            </foreach>
+	        </trim>
+	        <trim prefix="job_id =case" suffix="end,">
+	            <foreach collection="list" item="item" index="index">
+	                 <if test="item.jobId!=null">
+	                    when employee_id=#{item.jobId,jdbcType=INTEGER} then job_id = null
+	                </if>
+	            </foreach>
+	        </trim>
+	    </trim>
+	    where
+	    <foreach collection="list" separator="or" item="item" index="index" >
+	        employee_id = #{item.employeeId,jdbcType=INTEGER}
+	    </foreach>
+	</update>
+</mapper>

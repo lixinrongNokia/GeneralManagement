@@ -1,0 +1,18 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /SbLayuiDemo
+spring:
+  thymeleaf:
+    prefix: /WEB-INF/console/
+    suffix: .html
+    cache: false
+  devtools:
+    restart:
+      enabled: true
+      exclude: /WEB-INF
+  datasource:
+    username: lixinrong
+    password: lixinrong
+    url: jdbc:mysql:///base_pro?Unicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    driver-class-name: com.mysql.cj.jdbc.Driver

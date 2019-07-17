@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title th:text="${titleName}"></title>
+	<script th:src="@{/js/includ.js}"></script>
+</head>
+<body>
+	<div class="w_300">	
+		<form  class="layui-form"  th:action="@{/dictionary/insertOrupdate}"  method="post" >
+			<input type="hidden" id="dkId" name="dictionaryId" th:if="${data!=null}" th:value="${data.dictionaryId}">	  
+			<input type="hidden" id="dictionaryTable" name="dictionaryTable"/>
+			<div class="layui-form-item">
+				<label class="layui-form-label"><span class="layui-badge-dot"></span>&nbsp;操作项目</label>
+				<div class="layui-input-block">
+					<select id="dtkId" name="dictionaryTypeId" class="layui-input" lay-filter="test" lay-search="">
+						<option value="" id="">请选择项目</option>
+							<option th:each="typeList : ${dictionaryTypeList} " th:value="${typeList.dictionaryTypeId }" th:attr="key=${typeList.dictionaryTypeValue }" th:selected="${typeList.dictionaryTypeValue == data?.dictionaryTable}">[[${typeList.dictionaryTypeName }]]</option>
+		            </select>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label"><span class="layui-badge-dot"></span>&nbsp;操作属性</label>
+				<div class="layui-input-block">
+					<select id="dictionaryColum" name="dictionaryColum" class="layui-input" lay-search="">
+		            </select>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label"><span class="layui-badge-dot"></span>&nbsp;添加的值</label>
+				<div class="layui-input-block">
+					<input type="text" id="dictionaryValue" name="dictionaryValue" th:value="${data?.dictionaryValue}" autocomplete="off" class="layui-input" placeholder="输入名称">
+				</div>
+			</div>	
+			<div class="layui-form-item">
+	            <label class="layui-form-label">序号</label>
+	            <div class="layui-input-block">
+	                <input type="text" id="dictionarySerialNumber" name="dictionarySerialNumber" th:value="${data?.dictionarySerialNumber}" autocomplete="off" class="layui-input" placeholder="输入序号">
+	            </div>
+	        </div>  
+			 <div class="layui-form-item">
+			   <label class="layui-form-label">备注</label>
+			     <div class="layui-input-block">
+			      <textarea placeholder="请输入内容" name="dictionaryRemarks" class="layui-textarea">[[${data?.dictionaryRemarks}]]</textarea>
+			  </div>		   
+			 </div>
+		</form>
+	</div>
+	<script type="text/javascript">
+	var $;
+		layui.config({
+		    base: webRoot+'/layuiadmin/' //静态资源所在路径
+		}).extend({
+		    index: 'lib/index' //主入口模块
+		}).use(['form', 'layedit', 'laydate'], function(){
+			var form = layui.form,
+			layer = layui.layer,
+			layedit = layui.layedit,
+			laydate = layui.laydate;
+			$ = layui.$;
+		  
+		  	var dtParentId = $("#dtkId").val();//得到被选中的值
+		  	var dictionaryTable = $("#dtkId").find("option[selected]").attr("key");
+		  	$("#dictionaryTable").val(dictionaryTable);//赋值给隐藏的input
+		  	if(dtParentId != null && "" != dtParentId){
+				$.ajax({
+         			type: "post",  
+       				data: {"parentId":dtParentId},  
+       				url: webRoot+'/dictionary/selectByValue',
+        			dataType:"json",
+        			success:function(res){
+        				$("#dictionaryColum").html("");//清空第二个下拉框
+        				form.render();
+        				var option = "";   
+        				var val = "${data.dictionaryColum}";
+                    	if(res.data != null && res.data != ""){
+                    		for(var key in res.data){
+                    			if(res.data[key].dictionaryTypeValue == val){
+                    				option += "<option value='"+res.data[key].dictionaryTypeValue+"' selected = 'selected'>"+res.data[key].dictionaryTypeName+"</option>";
+                    			}else{
+                    				option += "<option value='"+res.data[key].dictionaryTypeValue+"'>"+res.data[key].dictionaryTypeName+"</option>";
+                    			}
+	                    	}
+	                    	$("#dictionaryColum").html(option);//将循环拼接的字符串插入第二个下拉列表  
+	                    	form.render();
+                    	}
+        			}
+			 	});
+		  	}else{
+			  	$("#dictionaryColum").html("");
+			  	form.render();
+		  	}
+		  
+			//如果第一个下拉列表的值改变则调用此方法
+		 	form.on('select(test)', function(data){
+			  	var dtParentId = data.value;//得到被选中的值
+			  	$.each($(data.elem).find("option"), function(i, item){     
+				  	if( $(item).attr("value") == dtParentId){
+					  	$("#dictionaryTable").val($(this).attr("key"));
+				  	}     
+			  	});			  
+			  	if(dtParentId != null && "" != dtParentId){
+				  	$.ajax({
+	         			type: "post",  
+	       				data: {"parentId":dtParentId},  
+	       				url: webRoot+'/dictionary/selectByValue',
+	        			dataType:"json",
+	        			success:function(res){
+	        				$("#dictionaryColum").html("");
+	        				form.render();
+	        				var option = "";   
+	                    	if(res.data != null && res.data != ""){
+	                    		for(var key in res.data){
+	                    			option += "<option value='"+res.data[key].dictionaryTypeValue+"'>"+res.data[key].dictionaryTypeName+"</option>"; 
+		                    	}
+		                    	$("#dictionaryColum").html(option);//将循环拼接的字符串插入第二个下拉列表  
+		                    	form.render();
+	                    	}
+	        			}
+				 	});
+			  	}else{
+				  	$("#dictionaryColum").html("");
+				  	form.render();
+			  	}
+		  	});  
+			
+		 	
+		});
+		
+		function dataSave(){
+		    var dtkId = $("#dtkId").val();
+			var dictionaryColum = $("#dictionaryColum").val();
+			var dictionaryValue = $("#dictionaryValue").val();
+		    
+			dtkId = $.trim(dtkId);
+			dictionaryColum = $.trim(dictionaryColum);
+			dictionaryValue = $.trim(dictionaryValue);
+	
+		    if(!dtkId){
+				layer.msg("表名不能为空");
+				return false;
+			}
+			if(!dictionaryColum){
+				layer.msg("列名不能为空");
+				return false;
+			}
+			if(!dictionaryValue){
+				layer.msg("值不能为空");
+				return false;
+			}
+			var result = "";
+			$.ajax({
+				url: $("form").attr("action"),
+				type:'post',				 
+				data:$("form").serialize(),
+				dataType:'json',
+				async:false,
+				success:function (res) {
+					result = res.STATE;
+				},
+				error:function () {
+					layer.msg('系统错误');
+				 }
+			});
+			return result;
+		}
+	</script>	      
+
+</body>
+</html>
