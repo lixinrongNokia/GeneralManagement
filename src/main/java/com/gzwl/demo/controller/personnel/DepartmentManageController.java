@@ -3,6 +3,7 @@ package com.gzwl.demo.controller.personnel;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -35,6 +36,7 @@ public class DepartmentManageController {
 	 * @return departmentListView.jsp
 	 */
 	@RequestMapping("/departmentListView")
+	@RequiresPermissions("departmentManage:departmentList:browse")
 	public String departmentListView() {
 		return "department/departmentListView";
 	}

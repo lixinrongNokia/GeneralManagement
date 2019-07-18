@@ -13,12 +13,12 @@ layui.define([ 'layer', 'form' ], function(exports) {
 	form.on('submit(LAY-user-login-submit)', function(obj) {
 		let data = obj.field;
 		if (data.username != username || data.password != password) {
-			obj.field.password = hex_md5(obj.field.password);
+			data.password = hex_md5(data.password);
 		}
 
 		$.ajax({
 			url : webRoot + '/user/checklogin',
-			data : obj.field,
+			data : data,
 			dataType : 'json',
 			success : function(res) {
 				if (res.result_code && res.return_code) {
@@ -52,8 +52,7 @@ layui.define([ 'layer', 'form' ], function(exports) {
 	});
 	/* 写入本地存储 */
 	function inputData(obj) {
-		let isChecked = $('#remember').val();
-		if ('true' == isChecked) {
+		if ('true' == obj.remember) {
 			layui.data('loginData', {
 				key : 'username',
 				value : obj.username

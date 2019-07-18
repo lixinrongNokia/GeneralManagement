@@ -31,13 +31,16 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/loginOut", "logout");
 		filterChainDefinitionMap.put("/user/login", "anon");
 		// authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
-		filterChainDefinitionMap.put("/user/**", "anon");
-		filterChainDefinitionMap.put("/test/**", "authc");
-		filterChainDefinitionMap.put("/page/**", "authc"); // 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
-															// shiroFilterFactoryBean.setLoginUrl("/login.html");
-		shiroFilterFactoryBean.setUnauthorizedUrl("/page/fail.html");// 未授权跳转
+		filterChainDefinitionMap.put("/user/forgetView", "authc");
+		filterChainDefinitionMap.put("/sys/**", "authc");
+		filterChainDefinitionMap.put("/departmentManage/**", "authc");
+		filterChainDefinitionMap.put("/console/**", "authc");
+		// 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
+		shiroFilterFactoryBean.setLoginUrl("/login.html");
+		//无权限时跳转页面
+		shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized.html");// 未授权跳转
 		// 登录成功跳转的链接 (这个不知道怎么用，我都是自己实现跳转的)
-		shiroFilterFactoryBean.setSuccessUrl("/page/main.html");
+		//shiroFilterFactoryBean.setSuccessUrl("/page/main.html");
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 		return shiroFilterFactoryBean;
 	}

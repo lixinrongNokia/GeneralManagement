@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.gzwl.demo.pojo.Employee;
 
 @Controller
-
 public class IndexController {
 	@RequestMapping("/")
 	public String indexPage() {
