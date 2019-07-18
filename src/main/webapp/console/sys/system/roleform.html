@@ -33,17 +33,20 @@
 							th:title="${menu.title }"
 							th:checked="${#lists.contains(role.menuIdList, menu.menuId)}">
 					</legend>
-					<input th:each="childrenMenu:${menu?.children}" type="checkbox"
-						name="menuList" lay-filter="checkedListener"
-						th:value="${childrenMenu.menuId }" lay-skin="primary"
-						th:title="${childrenMenu.title }"
-						th:checked="${#lists.contains(role.menuIdList,childrenMenu.menuId)}">
-
-					<input th:each="threeMenu:${childrenMenu?.children}"
-						type="checkbox" name="menuList" lay-filter="checkedListener"
-						th:value="${threeMenu.menuId }" lay-skin="primary"
-						th:title="${threeMenu.title }"
-						th:checked="${#lists.contains(role.menuIdList,threeMenu.menuId)}">
+					<div class="layui-input-block"
+						th:each="childrenMenu:${menu?.children}">
+						<input type="checkbox" name="menuList"
+							lay-filter="checkedListener" th:value="${childrenMenu.menuId }"
+							lay-skin="primary" th:title="${childrenMenu.title }"
+							th:checked="${#lists.contains(role.menuIdList,childrenMenu.menuId)}">
+						<div class="layui-input-block"
+							th:each="threeMenu:${childrenMenu?.children}">
+							<input type="checkbox" name="menuList"
+								lay-filter="checkedListener" th:value="${threeMenu.menuId }"
+								lay-skin="primary" th:title="${threeMenu.title }"
+								th:checked="${#lists.contains(role.menuIdList,threeMenu.menuId)}">
+						</div>
+					</div>
 
 				</fieldset>
 			</div>
@@ -54,14 +57,20 @@
 							lay-skin="primary" lay-filter="checkedListener"
 							th:title="${menu.title }">
 					</legend>
-					<input th:each="childrenMenu:${menu?.children}" type="checkbox"
-						name="menuList" lay-filter="checkedListener"
-						th:value="${childrenMenu.menuId }" lay-skin="primary"
-						th:title="${childrenMenu.title }"> <input
-						th:each="threeMenu:${childrenMenu?.children}" type="checkbox"
-						name="menuList" lay-filter="checkedListener"
-						th:value="${threeMenu.menuId }" lay-skin="primary"
-						th:title="${threeMenu.title }">
+					<div class="layui-input-block"
+						th:each="childrenMenu:${menu?.children}">
+						<input type="checkbox" name="menuList"
+							lay-filter="checkedListener" th:value="${childrenMenu.menuId }"
+							lay-skin="primary" th:title="${childrenMenu.title }">
+						<div class="layui-input-block"
+							th:each="threeMenu:${childrenMenu?.children}">
+							<input type="checkbox" name="menuList"
+								lay-filter="checkedListener" th:value="${threeMenu.menuId }"
+								lay-skin="primary" th:title="${threeMenu.title }">
+						</div>
+					</div>
+
+
 				</fieldset>
 			</div>
 		</div>
