@@ -3,42 +3,81 @@
  */
 layui.define([ 'layer', 'form' ], function(exports) {
 	var $ = layui.$, layer = layui.layer, form = layui.form;
+	let table = layui.data('loginData');
+	let username = table.username;
+	let password = table.password;
+	let remember = table.remember;
+
+	readData();
+	/* 监听提交按钮 */
 	form.on('submit(LAY-user-login-submit)', function(obj) {
-		obj.field.password = hex_md5(obj.field.password);
+		let data = obj.field;
+		if (data.username != username || data.password != password) {
+			obj.field.password = hex_md5(obj.field.password);
+		}
+
 		$.ajax({
 			url : webRoot + '/user/checklogin',
 			data : obj.field,
 			dataType : 'json',
 			success : function(res) {
 				if (res.result_code && res.return_code) {
-					if (res.result_code && res.return_code) {
-						toastANDRedirect('登录成功', webRoot + '/sys/home');
-					} else {
-						layer.msg(res.msg);
-					}
+					inputData(data);
+					toastANDRedirect('登录成功', webRoot + '/sys/home');
+				} else {
+					toastErr(res.msg);
 				}
 			}
 		});
 
 	});
-	
-	form.on('checkbox(remember)', function(data){
-    	$('#remember').val(data.elem.checked);
-    });
+	/* 监听勾选 */
+	form.on('checkbox(remember)', function(data) {
+		var isChecked = data.elem.checked;
+		$('#remember').val(isChecked);
+		if (!isChecked) {
+			layui.data('loginData', {
+				key : 'username',
+				remove : true
+			});
+			layui.data('loginData', {
+				key : 'password',
+				remove : true
+			});
+			layui.data('loginData', {
+				key : 'remember',
+				remove : true
+			});
+		}
+	});
+	/* 写入本地存储 */
+	function inputData(obj) {
+		let isChecked = $('#remember').val();
+		if ('true' == isChecked) {
+			layui.data('loginData', {
+				key : 'username',
+				value : obj.username
+			});
+			layui.data('loginData', {
+				key : 'password',
+				value : obj.password
+			});
+			layui.data('loginData', {
+				key : 'remember',
+				value : true
+			});
+		}
+	}
+	/* 读取本地存储 */
+	function readData() {
+		if (remember) {
+			$('#remember').val(true);
+			$('#username').val(table.username);
+			$('#password').val(table.password);
+			$('#remember').prop('checked', true);
+			form.render();
+		}
+	}
 
 	exports('login', {});
 });
-
-function getCookie(NameOfCookie) {
-	if (document.cookie.length > 0) {
-		begin = document.cookie.indexOf(NameOfCookie + "=");
-		if (begin !== -1) {
-			begin += NameOfCookie.length + 1;
-			end = document.cookie.indexOf(";", begin);
-			if (end === -1)
-				end = document.cookie.length;
-			return unescape(document.cookie.substring(begin, end));
-		}
-	}
-	return null;
-}

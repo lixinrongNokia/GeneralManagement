@@ -82,12 +82,12 @@
 			    ,limit:10//每页默认数
 			    ,limits:[10,20,30,40]
 			    ,cols: [ [ //表头
-	              {field:'employeeLoginName', title: '登陆名',minWidth:100}
-	              ,{field:'employeeNickName', title: '昵称',minWidth:100}
-	              ,{field:'roleName', title: '角色',minWidth:100,templet:'#roleTpl'}
-	              ,{field:'departmentName', title: '部门',minWidth:100,templet:'#departmentTpl'}
-	              ,{field:'employeeStatus', minWidth :'100',title: '状态',templet:'#statusTpl'}
-	              ,{title: '操作',toolbar: '#barEdit',fixed:'right',width:120}
+	              {field:'employeeLoginName', title: '登陆名', align:'center', minWidth:100}
+	              ,{field:'employeeNickName', title: '昵称', align:'center', minWidth:100}
+	              ,{field:'roleName', title: '角色', align:'center', minWidth:100,templet:'#roleTpl'}
+	              ,{field:'departmentName', title: '部门', align:'center', minWidth:100,templet:'#departmentTpl'}
+	              ,{field:'employeeStatus', minWidth :'100',title: '状态', align:'center', templet:'#statusTpl'}
+	              ,{title: '操作',toolbar: '#barEdit',align:'center',fixed:'right',width:120}
 			    ] ]
 					,page: true //开启分页
 					,where: {timestamp: (new Date()).valueOf()}

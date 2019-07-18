@@ -52,13 +52,11 @@
 			    ,limit:10//每页默认数
 			    ,limits:[10,20,30,40]
 			    ,cols:
-			    	[
-				    	[
-			              {field:'roleName', title: '角色名',width:100,minWidth:100}
-			              ,{field:'roleRemark', title: '角色描述',minWidth:150,templet:'#descTpl'}
-			              ,{title: '操作',toolbar: '#barEdit',fixed:'right',width:120}
-				    	]
-			    	]
+			    	[ [
+		              {field:'roleName', title: '角色名',width:100,minWidth:100}
+		              ,{field:'roleRemark', title: '角色描述',minWidth:150,templet:'#descTpl'}
+		              ,{title: '操作',toolbar: '#barEdit',fixed:'right',width:120}
+				    ] ]
 					,page: true //开启分页
 					,where: {timestamp: (new Date()).valueOf()}
 			  });

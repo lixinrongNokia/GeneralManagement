@@ -3,11 +3,7 @@
  */
 package com.gzwl.demo.controller.sys;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -91,15 +87,13 @@ public class EmployeeController {
 	 */
 	@RequestMapping("/checklogin")
 	@ResponseBody
-	public ResultBean checklogin(HttpServletRequest req, HttpServletResponse res, String username, String password,
-			boolean remember) {
-		System.out.println("验证登录");
+	public ResultBean checklogin(HttpServletRequest req, HttpServletResponse res, String username, String password) {
 		if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
 			return new ResultBean(false, "参数不能为空");
 		}
 		try {
 			Subject subject = SecurityUtils.getSubject();
-			UsernamePasswordToken token = new UsernamePasswordToken(username, password, true);
+			UsernamePasswordToken token = new UsernamePasswordToken(username, password, false);
 			subject.login(token);
 		} catch (UnknownAccountException e) {
 			return new ResultBean(false, e.getMessage());
@@ -109,35 +103,6 @@ public class EmployeeController {
 			return new ResultBean(false, e.getMessage());
 		} catch (AuthenticationException e) {
 			return new ResultBean(false, "账户验证失败");
-		}
-
-		try {
-			if (remember) {
-				Cookie usernameCookie = new Cookie("username", URLEncoder.encode(username, "UTF-8"));
-				Cookie passwordCookie = new Cookie("password", password);
-				Cookie rememberCookie = new Cookie("remember", remember + "");
-				/* 设置cookie有效期两周 */
-				usernameCookie.setMaxAge(60 * 60 * 24 * 14);
-				passwordCookie.setMaxAge(60 * 60 * 24 * 14);
-				rememberCookie.setMaxAge(60 * 60 * 24 * 14);
-				res.addCookie(usernameCookie);
-				res.addCookie(passwordCookie);
-				res.addCookie(rememberCookie);
-			} else {
-				Cookie[] cookies = req.getCookies();
-				for (int i = 0; i < cookies.length; i++) {
-					if ("username".equals(cookies[i].getName())) {
-						cookies[i].setMaxAge(0);
-					} else if ("password".equals(cookies[i].getName())) {
-						cookies[i].setMaxAge(0);
-					} else if ("remember".equals(cookies[i].getName())) {
-						cookies[i].setMaxAge(0);
-					}
-					res.addCookie(cookies[i]);
-				}
-			}
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
 		}
 		return new ResultBean(true, true, 0);
 	}

@@ -92,8 +92,22 @@ function checkEmail(email) {
 	return /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/
 			.test(email);
 }
-
+/*随机数*/
 function randomIndex(n,m){
     var c = m-n+1;  
     return Math.floor(Math.random() * c + n);
+}
+/*取Cookie*/
+function getCookie(NameOfCookie) {
+	if (document.cookie.length > 0) {
+		begin = document.cookie.indexOf(NameOfCookie + "=");
+		if (begin !== -1) {
+			begin += NameOfCookie.length + 1;
+			end = document.cookie.indexOf(";", begin);
+			if (end === -1)
+				end = document.cookie.length;
+			return unescape(document.cookie.substring(begin, end));
+		}
+	}
+	return null;
 }
