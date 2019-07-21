@@ -1,3 +1,4 @@
+/*菜单只有三级*/
 layui.define([ 'form', 'element' ], function(exports) {
 	var $ = layui.$, form = layui.form, element = layui.element;
 	form.on('checkbox(checkedListener)', function(data) {
@@ -8,92 +9,61 @@ layui.define([ 'form', 'element' ], function(exports) {
 			if ($(parentDIV).has('.layui-input-block').length == 0) {
 				/* 没有子节点 */
 				let parentTag = $(parentDIV).parent().find('>input');
-				let ancestorTag = $(parentDIV).parent().parent().find(
-						'legend input');
+				let ancestorTag = $(parentDIV).parent().parent().find('legend input');
 				let parentTagName = $(parentDIV).parent()[0].tagName;
 				if (!data.elem.checked) {
-					let brotherArray = $(parentDIV).parent().find(
-					'.layui-input-block>input');
 					if ('DIV' == parentTagName) {
 						/*三级节点*/
-						let ancestorArray = $(parentDIV).parent().parent()
-								.find('>.layui-input-block>input');
-
-						let hasBrotherCheck = false;
-						$.each(brotherArray, function(i, item) {
-							if (item.checked) {
-								hasBrotherCheck = true;
-								return false;
-							}
-						});
-						/* 判断兄弟节点是否有选中 */
-						if (!hasBrotherCheck) {
-							$(parentDIV).parent().find('>input').prop(
-									"checked", false);
-
-							let ancestorCheck = false;
-							$.each(ancestorArray, function(i, item) {
-								if (item.checked) {
-									ancestorCheck = true;
-									return false;
-								}
-							});
-							/* 判断父节点的兄弟节点是否有选中 */
-							if (!ancestorCheck) {
-								$(parentDIV).parent().parent().find(
-										'legend input').prop("checked", false);
+						if($(parentDIV).siblings().find('>input:checked').size()==0){
+							/*设置父节点反选*/
+							$(parentDIV).parent().find('>input').prop('checked', false);
+							if($(parentDIV).parent().parent().find('.layui-input-block>input:checked').size()==0){
+								/*设置祖父节点反选*/
+								$(parentDIV).parent().parent().find('legend input').prop('checked', false);
 							}
 						}
+						
 					} else {
 						/*二级节点*/
-						let hasBrotherCheck = false;
-						$.each(brotherArray, function(i, item) {
-							if (item.checked) {
-								hasBrotherCheck = true;
-								return false;
-							}
-						});
-						/* 判断兄弟节点是否有选中 */
-						if (!hasBrotherCheck) {
-							$(parentDIV).parent().find('legend input').prop(
-									"checked", false);
+						if($(parentDIV).parent().find('.layui-input-block>input:checked').size()==0){
+							/*设置父节点反选*/
+							$(parentDIV).parent().find('legend input').prop('checked', false);
 						}
 					}
 				} else {
 					if ('DIV' == parentTagName) {
+						/*三级节点*/
+						/*设置父节点选中*/
 						$(parentTag).prop("checked", true);
+						/*设置祖父节点选中*/
 						$(ancestorTag).prop("checked", true);
 					} else {
+						/*二级节点*/
+						/*设置父节点选中*/
 						$(parentDIV).parent().find('legend input').prop(
 								"checked", true);
 					}
 				}
 			} else {
 				/* 有子节点 */
-				let childrenArray = $(parentDIV).find('input');
+				/*二级节点*/
+				let childrenArray = $(parentDIV).find('.layui-input-block input');
 				if (!data.elem.checked) {
+					/*设置子节点反选*/
 					$.each(childrenArray, function(i, item) {
 						$(item).prop("checked", false);
 					});
-
-					let hasCheck = false;
-					let brotherArray = $(parentDIV).parent().find(
-							'.layui-input-block>input');
-					$.each(brotherArray, function(i, item) {
-						if (item.checked) {
-							hasCheck = true;
-							return false;
-						}
-					});
-					if (!hasCheck) {
-						$(parentDIV).parent().find('legend input').prop(
-								"checked", false);
+					/*设置父节点反选*/
+					if($(parentDIV).parent().find('.layui-input-block>input:checked').size()==0){
+						$(parentDIV).parent().find('legend input').prop('checked', false);
 					}
 
 				} else {
+					/*设置子节点选中*/
 					$.each(childrenArray, function(i, item) {
 						$(item).prop("checked", true);
 					});
+					/*设置父节点选中*/
 					$(parentDIV).parent().find('legend input').prop("checked",
 							true);
 				}
