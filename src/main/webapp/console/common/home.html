@@ -77,7 +77,8 @@
 							<dl class="layui-nav-child">
 								<dd data-name="console" th:each="firstChildren:${menu.children}">
 									<a
-										th:attr="lay-href=${#request.getContextPath()}+'/'+${firstChildren.href}">[[${firstChildren.title}]]</a>
+										th:attr="lay-href=${#request.getContextPath()}+'/'+${firstChildren.href}"><i
+								class="layui-icon" th:utext="${firstChildren.icon}"></i>[[${firstChildren.title}]]</a>
 								</dd>
 							</dl></li>
 					</ul>
