@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSON;
 import com.gzwl.demo.pojo.Employee;
 import com.gzwl.demo.pojo.Menu;
 import com.gzwl.demo.pojo.Role;
@@ -159,7 +158,6 @@ public class SystemController {
 			req.setAttribute("role", roleMenuService.getRoleNoTree(new RoleMenuKey(roleId)));
 		}
 		List<Menu> list = menuService.listMenu();
-		System.out.println("=============="+JSON.toJSONString(list));
 		req.setAttribute("menus", list);
 		return "sys/system/roleform";
 	}
@@ -192,7 +190,8 @@ public class SystemController {
 
 	/** 显示管理员列表页面 */
 	@RequestMapping("/adminListView")
-	public String adminList() {
+	@RequiresPermissions("sys:admin:list")
+	public String adminListView() {
 		return "employee/employeeListView";
 	}
 
@@ -208,7 +207,8 @@ public class SystemController {
 	}
 
 	/** 显示添加管理员页面 */
-	@RequestMapping("/addAdminView")
+	@RequestMapping("/addAdminView")	
+	@RequiresPermissions("sys:admin:save")
 	public String addAdminView(HttpServletRequest req) {
 		req.setAttribute("roles", roleService.list());
 		req.setAttribute("departments", departmentService.listDepartmentNonSort());

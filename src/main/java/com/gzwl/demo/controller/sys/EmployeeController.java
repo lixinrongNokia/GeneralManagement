@@ -242,8 +242,8 @@ public class EmployeeController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping("/sessionOut")
+	@RequestMapping("/unauthorized")
 	public String sessionOut() {
-		return "common/sessionOut";
+		return "unauthorized";
 	}
 }

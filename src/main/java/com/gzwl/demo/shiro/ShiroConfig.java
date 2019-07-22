@@ -7,10 +7,13 @@ import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
+import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -27,22 +30,37 @@ public class ShiroConfig {
 		shiroFilterFactoryBean.setSecurityManager(securityManager);
 		// 拦截器.
 		Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
+		// authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
 		// 配置退出过滤器,其中的具体的退出代码Shiro已经替我们实现了
 		filterChainDefinitionMap.put("/loginOut", "logout");
 		filterChainDefinitionMap.put("/user/login", "anon");
-		// authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
-		filterChainDefinitionMap.put("/user/forgetView", "authc");
-		filterChainDefinitionMap.put("/sys/**", "authc");
-		filterChainDefinitionMap.put("/departmentManage/**", "authc");
+		filterChainDefinitionMap.put("/user/checklogin", "anon");
 		filterChainDefinitionMap.put("/console/**", "authc");
+		filterChainDefinitionMap.put("/sys/**", "authc");
 		// 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
-		shiroFilterFactoryBean.setLoginUrl("/login.html");
-		//无权限时跳转页面
-		shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized.html");// 未授权跳转
+		shiroFilterFactoryBean.setLoginUrl("/user/login");
+		// 无权限时跳转页面
+		shiroFilterFactoryBean.setUnauthorizedUrl("/user/unauthorized");// 未授权跳转
 		// 登录成功跳转的链接 (这个不知道怎么用，我都是自己实现跳转的)
-		//shiroFilterFactoryBean.setSuccessUrl("/page/main.html");
+		// shiroFilterFactoryBean.setSuccessUrl("/page/main.html");
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 		return shiroFilterFactoryBean;
+	}
+
+	/** 开启注解支持 */
+	@Bean
+	@ConditionalOnMissingBean
+	public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+		DefaultAdvisorAutoProxyCreator defaultAAP = new DefaultAdvisorAutoProxyCreator();
+		defaultAAP.setProxyTargetClass(true);
+		return defaultAAP;
+	}
+
+	@Bean
+	public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
+		AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
+		authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
+		return authorizationAttributeSourceAdvisor;
 	}
 
 	/**
