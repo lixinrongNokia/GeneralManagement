@@ -8,10 +8,10 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.pagehelper.PageInfo;
 import com.gzwl.demo.dao.MenuMapper;
 import com.gzwl.demo.dao.RoleMenuMapper;
 import com.gzwl.demo.pojo.Menu;
@@ -21,6 +21,7 @@ import com.gzwl.demo.pojo.RoleMenuKey;
 import com.gzwl.demo.service.sys.MenuService;
 import com.gzwl.demo.util.MenuAdapterUtil;
 import com.gzwl.demo.util.ResultUtil;
+
 /**
  * 
  * <p>
@@ -74,10 +75,9 @@ public class MenuServiceImpl implements MenuService {
 	public ResultUtil listByExample(Menu record) {
 		MenuExample example = new MenuExample();
 		List<Menu> list = menuMapper.selectByExample(example);
-		PageInfo<Menu> pageInfo = new PageInfo<Menu>(list);
 		ResultUtil resultUtil = new ResultUtil();
-		resultUtil.setCount(pageInfo.getTotal());
-		resultUtil.setData(pageInfo.getList());
+		resultUtil.setCount((long)list.size());
+		resultUtil.setData(list);
 		resultUtil.setCode(0);
 		return resultUtil;
 	}

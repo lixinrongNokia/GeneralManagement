@@ -14,12 +14,28 @@ spring:
   datasource:
     username: lixinrong
     password: lixinrong
-    url: jdbc:mariadb://127.0.0.1:3306/base_pro?Unicode=true&characterEncoding=utf8
-    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/ytct?Unicode=true&characterEncoding=utf8
+    driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
       maximum-pool-size: 50
       minimum-idle: 5
+  cache:
+    ehcache:
+      config: classpath:ehcache.xml
+  redis:
+    jedis:
+      pool:
+        max-active: 200
+        max-idle: 10
+        min-idle: 0
+    timeout: 5000
+    host: 192.168.1.3
+    port: 6379
 mybatis:
   mapper-locations:
   - classpath:mapper/*.xml
+logging:
+  level:
+    com.gzwl.demo.dao:
+      debug

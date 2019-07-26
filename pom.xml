@@ -15,7 +15,7 @@
 	<packaging>war</packaging>
 	<name>sb-layui-demo</name>
 	<description>Demo project for Spring Boot</description>
-<!--maven打包跳过测试 mvn package -Dmaven.test.skip=true -->
+	<!--maven打包跳过测试 mvn package -Dmaven.test.skip=true -->
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
@@ -25,6 +25,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 			<exclusions>
+				<!-- 打包排除maven内置tomcat -->
 				<exclusion>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-tomcat</artifactId>
@@ -37,8 +38,11 @@
 			<version>2.0.1</version>
 		</dependency>
 
-		<!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> 
-			<scope>runtime</scope> </dependency> -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
 		<!-- 数据库连接池 -->
 		<dependency>
@@ -47,9 +51,39 @@
 			<scope>compile</scope>
 		</dependency>
 		<!-- 数据库驱动 -->
+		<!-- <dependency> <groupId>org.mariadb.jdbc</groupId> <artifactId>mariadb-java-client</artifactId> 
+			</dependency> -->
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-redis -->
 		<dependency>
-			<groupId>org.mariadb.jdbc</groupId>
-			<artifactId>mariadb-java-client</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>io.lettuce</groupId>
+					<artifactId>lettuce-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+		</dependency>
+
+
+		<!-- https://mvnrepository.com/artifact/org.ehcache/ehcache -->
+		<!-- <dependency> <groupId>org.ehcache</groupId> <artifactId>ehcache</artifactId> 
+			</dependency> -->
+		<!-- https://mvnrepository.com/artifact/net.sf.ehcache/ehcache -->
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+		</dependency>
+
+		<!-- 缓存支持启动器 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
