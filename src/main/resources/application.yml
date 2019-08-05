@@ -14,7 +14,7 @@ spring:
   datasource:
     username: lixinrong
     password: lixinrong
-    url: jdbc:mysql://127.0.0.1:3306/ytct?Unicode=true&characterEncoding=utf8
+    url: jdbc:mysql://127.0.0.1:3306/bash_db?Unicode=true&characterEncoding=utf8
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
